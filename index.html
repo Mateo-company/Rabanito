@@ -26,16 +26,17 @@
             color: var(--tinta);
             padding: 10px;
             box-sizing: border-box;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
-        /* Contenedor del sobre adaptado a porcentajes reales con ancho máximo */
         .envelope-wrapper {
             width: 100%;
             max-width: 480px;
             display: flex;
             justify-content: center;
             align-items: center;
+            perspective: 1000px;
+            transition: opacity 0.5s ease;
         }
 
         .envelope-container {
@@ -43,24 +44,23 @@
             width: 100%;
             aspect-ratio: 480 / 330;
             background: var(--pergamino-oscuro);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(112, 75, 42, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
             border: 4px solid #8c6747;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease;
+            transform-style: preserve-3d;
         }
 
-        .envelope-container.open {
-            transform: scale(0);
+        .envelope-wrapper.hidden {
             opacity: 0;
             pointer-events: none;
             position: absolute;
+            transform: scale(1.2);
         }
 
-        /* Solapa corregida con un SVG embebido para que escale de forma perfecta al 100% del contenedor sin deformarse */
         .envelope-flap {
             position: absolute;
             top: 0;
@@ -72,16 +72,22 @@
             transform-origin: top;
             transition: transform 0.6s ease;
             z-index: 2;
+            backface-visibility: hidden;
+        }
+
+        .envelope-container.opening .envelope-flap {
+            transform: rotateX(180deg);
         }
 
         .wax-seal {
             position: absolute;
+            top: 35%;
             width: 13%;
             aspect-ratio: 1 / 1;
             min-width: 35px;
             background: radial-gradient(circle, var(--sello-cera) 60%, var(--sello-cera-oscuro) 100%);
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -89,54 +95,49 @@
             font-family: 'Cinzel', serif;
             font-weight: bold;
             font-size: clamp(14px, 3.5vw, 22px);
-            text-shadow: 0 -1px 1px rgba(0,0,0,0.8);
             z-index: 10;
             border: 2px dashed #520909;
-            transition: transform 0.3s;
+            transition: transform 0.3s, top 0.6s ease;
         }
 
-        .wax-seal:hover {
-            transform: scale(1.08);
+        .envelope-container.opening .wax-seal {
+            top: 85%;
+            transform: rotateX(180deg);
         }
 
         .envelope-text {
             font-family: 'IM Fell English SC', serif;
             font-size: clamp(20px, 6vw, 42px);
-            letter-spacing: 1px;
             color: #5c3a21;
             margin-top: 25%;
             text-align: center;
-            z-index: 5;
+            z-index: 1;
             width: 100%;
-            padding: 0 10px;
-            box-sizing: border-box;
         }
 
-        /* Contenedor de la Presentación (Diapositivas) */
         .presentation {
             position: absolute;
             width: 95vw;
             max-width: 750px;
-            height: 82vh;
-            max-height: 520px;
+            height: 85vh;
+            max-height: 550px;
             background: var(--pergamino);
-            background-image: radial-gradient(circle, transparent 60%, rgba(140, 103, 71, 0.2) 100%);
             border: 4px ridge #614124;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 80px rgba(122, 85, 47, 0.2);
-            padding: 15px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            padding: 20px;
             box-sizing: border-box;
             display: none;
             flex-direction: column;
             justify-content: space-between;
             opacity: 0;
-            transform: scale(0.5);
+            transform: translateY(30px);
             transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .presentation.active {
             display: flex;
             opacity: 1;
-            transform: scale(1);
+            transform: translateY(0);
         }
 
         .slides-wrapper {
@@ -145,7 +146,7 @@
             align-items: center;
             justify-content: center;
             overflow-y: auto;
-            padding: 5px 0;
+            padding: 10px 0;
         }
 
         .slide {
@@ -156,83 +157,99 @@
             text-align: center;
             width: 100%;
             height: 100%;
-            animation: fadeIn 0.6s ease-in-out;
         }
 
         .slide.active-slide {
             display: flex;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         h2 {
             font-family: 'Cinzel', serif;
-            font-size: clamp(18px, 4.5vw, 26px);
+            font-size: clamp(20px, 5vw, 30px);
             color: #3b220c;
             border-bottom: 2px solid #8c6747;
-            padding-bottom: 6px;
-            margin-bottom: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
             width: 100%;
         }
 
         p {
-            font-size: clamp(13px, 3.2vw, 17px);
-            line-height: 1.5;
+            font-size: clamp(14px, 3.5vw, 18px);
+            line-height: 1.6;
             color: #4a321a;
-            max-width: 600px;
             margin: 0;
-            max-height: 60vh;
-            overflow-y: auto;
-            padding: 0 5px;
+            padding: 0 10px;
+            text-align: justify;
+            max-width: 650px;
+            visibility: hidden; 
         }
 
-        /* Controles de navegación y botones ajustados para celulares pequeños */
+        p.typing-effect {
+            visibility: visible;
+            overflow: hidden;
+            border-right: 2px solid #8c6747;
+            white-space: pre-wrap;
+            animation: typing 3.5s steps(60, end), blink-caret 0.75s step-end infinite;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #8c6747; }
+        }
+
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-top: 2px dashed #b59b7a;
-            padding-top: 8px;
-            gap: 5px;
+            padding-top: 15px;
             width: 100%;
-            box-sizing: border-box;
+            margin-top: 10px;
         }
 
         button.nav-btn {
             background: #8c6747;
             color: var(--pergamino);
             border: 2px solid #4a321a;
-            padding: 6px 10px;
+            padding: 8px 15px;
             border-radius: 50px;
             font-family: 'Special Elite', cursive;
-            font-size: clamp(11px, 2.8vw, 16px);
+            font-size: clamp(12px, 3vw, 16px);
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: background 0.2s, transform 0.1s;
-            white-space: nowrap;
-            flex-shrink: 0;
+            transition: all 0.3s;
         }
 
-        button.nav-btn:hover {
+        button.nav-btn:hover:not(:disabled) {
             background: #614124;
+            transform: translateY(-2px);
+        }
+
+        button.nav-btn:disabled {
+            background: #ccc;
+            border-color: #999;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
         }
 
         .slide-counter {
             font-family: 'Cinzel', serif;
-            font-size: clamp(11px, 3vw, 16px);
+            font-size: clamp(12px, 3.5vw, 18px);
             color: #5c3a21;
-            white-space: nowrap;
-            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="envelope-wrapper">
-        <div class="envelope-container" id="envelope" onclick="openLetter()">
+    <div class="envelope-wrapper" id="envelope-wrapper">
+        <div class="envelope-container" id="envelope" onclick="startOpening()">
             <div class="envelope-flap"></div>
             <div class="wax-seal">ℜ</div>
             <div class="envelope-text">Toca para abrir</div>
@@ -241,32 +258,43 @@
 
     <div class="presentation" id="presentation">
         <div class="slides-wrapper">
+            <!-- Diapositiva 1 -->
             <div class="slide active-slide">
                 <h2>𝓗𝓸𝓵𝓪 𝓡𝓪𝓫𝓪𝓷𝓲𝓽𝓸</h2>
-                <p>𝓦𝓸𝓵𝓪𝓹, 𝓱𝓸𝔂 𝓮𝓼 𝓽𝓾 𝓬𝓾𝓶𝓹𝓵𝓮 𝔂 𝓽𝓮 𝓺𝓾𝓮𝓻í𝓪 𝓭𝓪𝓻 𝓾𝓷 𝓹𝓮𝓺𝓾𝓮ñ𝓸 𝓻𝓮𝓰𝓪𝓵𝓲𝓽𝓸, 𝓹𝓸𝓻 𝓮𝓼𝓸 𝓶𝓲𝓼𝓶𝓸 𝓭𝓮 𝓽𝓾 𝓬𝓾𝓶𝓹𝓵𝓮 𝔂 𝓹𝓸𝓻𝓺𝓾𝓮 𝓪𝓹𝓮𝓷𝓪𝓼 𝓵𝓵𝓮𝓿𝓪𝓶𝓸𝓼 𝓾𝓷 𝓪ñ𝓸 𝓱𝓪𝓫𝓵𝓪𝓷𝓭𝓸, 𝔂 𝓼𝓲𝓶𝓹𝓵𝓮𝓶𝓮𝓷𝓽𝓮 𝓽𝓮 𝓺𝓾𝓲𝓮𝓻𝓸 𝓶𝓾𝓬𝓱𝓸, 𝓸𝓳𝓪𝓵𝓪 𝓽𝓮 𝓵𝓪 𝓹𝓪𝓼𝓮𝓼 𝓶𝓾𝔂 𝓫𝓲𝓮𝓷 𝔂 𝓽𝓸𝓭𝓸, 𝓵𝓪 𝓿𝓮𝓻𝓭𝓪𝓭 𝓷𝓸 𝓼𝓸𝔂 𝓫𝓾𝓮𝓷𝓸 𝓭𝓲𝓬𝓲𝓮𝓷𝓭𝓸 𝓹𝓪𝓵𝓪𝓫𝓻𝓪𝓼 𝓹𝓪𝓻𝓪 𝓮𝓼𝓽𝓮 𝓽𝓲𝓹𝓸 𝓭𝓮 𝓬𝓸𝓼𝓪𝓼 𝓹𝓮𝓻𝓸 𝓫𝓷𝓸𝓹, 𝓶𝓾𝔂 𝓰𝓾𝓭 𝓺𝓾𝓮 𝔂𝓪 𝓽𝓲𝓮𝓷𝓮𝓼 𝓾𝓷 𝓪ñ𝓲𝓽𝓸 𝓶á𝓼 𝔂 𝓹𝓸𝓼 𝓪𝓳𝓪𝓵𝓪 𝓽𝓮𝓷𝓰𝓪𝓶𝓸𝓼 𝓶𝓪𝓼 𝓪ñ𝓸𝓼 𝓼𝓲𝓮𝓷𝓭𝓸 𝓯𝓻𝓲𝓮𝓷𝓭𝓼</p>
+                <p id="text-0">¡Wolap! Hoy es tu cumpleaños y te quería dar un pequeño regalito. Por eso mismo de tu cumple y porque apenas llevamos un año hablando, y simplemente te quiero mucho. Ojalá te la pases muy bien y todo. La verdad no soy bueno diciendo palabras para este tipo de cosas, pero bueno, muy gud que ya tienes un añito más y pos ojalá tengamos más años siendo friends.</p>
             </div>
+            <!-- Diapositiva 2 -->
             <div class="slide">
                 <h2>𝓣𝓮 𝓺𝓾𝓲𝓮𝓻𝓸 </h2>
-                <p>Quisa no sea el mejor regalo, ni el regalo que esperas, pero es lo que te puedo dar, más por la distancia y eso, perop es lo que te podria dar, la verdad me gustaria darte algo más y mejor, pero es lo que se me ocurrio</p>
+                <p id="text-1">Quizá no sea el mejor regalo, ni el regalo que esperas, pero es lo que te puedo dar, más por la distancia y eso. La verdad me gustaría darte algo más y mejor, pero es lo que se me ocurrió.</p>
             </div>
+            <!-- Diapositiva 3 -->
             <div class="slide">
                 <h2>𝓶𝓾𝓬𝓱𝓸</h2>
-                <p>y pos ojala te guste mucho este regalito, de todas maneras hay un par de cosillas más, y ojala todo te guste </p>
+                <p id="text-2">Y pos ojalá te guste mucho este regalito. De todas maneras hay un par de cosillas más, y ojalá todo te guste.</p>
             </div>
+            <!-- Diapositiva 4 -->
             <div class="slide">
                 <h2>pq eres alguien muy importante para mi </h2>
-                <p>Porque eres alguien que nunca me arrepentire de haber conocido, y aunque sea malo con las palabras y eso solo quiero recordartelo, decirte que haces que mis dias se sientan mas bonitos</p>
+                <p id="text-3">Porque eres alguien de quien nunca me arrepentiré de haber conocido. Y aunque sea malo con las palabras y eso, solo quiero recordártelo, decirte que haces que mis días se sientan más bonitos.</p>
             </div>
+            <!-- Diapositiva 5 -->
             <div class="slide">
                 <h2>y realmente te aprecio mucho</h2>
-                <p>sinceramente no crei de hablaramos tanto tiempo, crei que me dejarias de hablar a las semanas y no se,me alegra que no me hayas dejado de hablar,realemnte te quiero muchop</p>
+                <p id="text-4">Sinceramente no creí que habláramos tanto tiempo. Creí que me dejarías de hablar a las semanas y no sé, me alegra que no me hayas dejado de hablar. Realmente te quiero muchop.</p>
+            </div>
+        
+        <!-- Diapositiva 6 -->
+            <div class="slide">
+                <h2>pasatela bien</h2>
+                <p id="text-5"> Je t’aime vraiment beaucoup et j’apprécie ton amitié, j’espère que tu passeras un bon moment aujourd’hui et que tu profiteras de ta journée plus que tout</p>
             </div>
         </div>
 
         <div class="controls">
-            <button class="nav-btn" onclick="changeSlide(-1)">← Anterior</button>
-            <span class="slide-counter" id="counter">Página 1 de 5</span>
-            <button class="nav-btn" onclick="changeSlide(1)">Siguiente →</button>
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Anterior</button>
+            <span class="slide-counter" id="counter">Página 1 de 6</span>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
         </div>
     </div>
 
@@ -274,15 +302,26 @@
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
+        const paragraphs = document.querySelectorAll('.slide p');
 
-        function openLetter() {
+        function startOpening() {
             const envelope = document.getElementById('envelope');
-            const presentation = document.getElementById('presentation');
+            const wrapper = document.getElementById('envelope-wrapper');
             
-            envelope.classList.add('open');
+            envelope.classList.add('opening');
+            
             setTimeout(() => {
-                presentation.classList.add('active');
-            }, 400);
+                wrapper.classList.add('hidden');
+                document.getElementById('presentation').classList.add('active');
+                typeWriterEffect(0);
+            }, 600);
+        }
+
+        function typeWriterEffect(index) {
+            paragraphs.forEach(p => p.classList.remove('typing-effect'));
+            setTimeout(() => {
+                document.getElementById(`text-${index}`).classList.add('typing-effect');
+            }, 50);
         }
 
         function changeSlide(direction) {
@@ -297,6 +336,13 @@
 
             slides[currentSlide].classList.add('active-slide');
             document.getElementById('counter').innerText = `Página ${currentSlide + 1} de ${totalSlides}`;
+            
+            // Actualizar estado de los botones
+            document.getElementById('prevBtn').disabled = (currentSlide === 0);
+            document.getElementById('nextBtn').disabled = (currentSlide === totalSlides - 1);
+
+            // Activar efecto de escritura en la nueva página
+            typeWriterEffect(currentSlide);
         }
     </script>
 </body>
