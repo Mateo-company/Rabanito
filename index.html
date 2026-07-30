@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para rabanito😋</title>
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&family=Special+Elite&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pergamino: #f4ecd8;
+            --pergamino-oscuro: #e3d3b3;
+            --tinta: #2c1d0c;
+            --sello-cera: #a81c1c;
+            --sello-cera-oscuro: #781010;
+        }
+
+        body {
+            background-color: #1a110b;
+            background-image: radial-gradient(circle, #208fa0 0%, #8f1791 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Special Elite', cursive;
+            color: var(--tinta);
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* Contenedor principal de la carta (Responsivo) */
+        .envelope-container {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            height: 330px;
+            background: var(--pergamino-oscuro);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(112, 75, 42, 0.3);
+            border: 5px solid #8c6747;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .envelope-container.open {
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            border-left: 240px solid transparent;
+            border-right: 240px solid transparent;
+            border-top: 165px solid #b4a076;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+        }
+
+        .wax-seal {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, var(--sello-cera) 60%, var(--sello-cera-oscuro) 100%);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffcccc;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 20px;
+            text-shadow: 0 -1px 1px rgba(0,0,0,0.8);
+            z-index: 10;
+            border: 3px dashed #520909;
+            transition: transform 0.3s;
+        }
+
+        .wax-seal:hover {
+            transform: scale(1.08);
+        }
+
+        .envelope-text {
+            font-family: 'IM Fell English SC', serif;
+            font-size: clamp(30px, 8vw, 50px);
+            letter-spacing: 2px;
+            color: #5c3a21;
+            margin-top: 155px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        /* Contenedor de la Presentación (Diapositivas responsivo) */
+        .presentation {
+            position: absolute;
+            width: 92vw;
+            max-width: 800px;
+            height: 80vh;
+            max-height: 600px;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle, transparent 60%, rgba(140, 103, 71, 0.2) 100%);
+            border: 4px ridge #614124;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 80px rgba(122, 85, 47, 0.2);
+            padding: 20px;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .presentation.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slides-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .slide {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .slide.active-slide {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(20px, 5vw, 28px);
+            color: #3b220c;
+            border-bottom: 2px solid #8c6747;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        p {
+            font-size: clamp(14px, 3.5vw, 18px);
+            line-height: 1.5;
+            color: #4a321a;
+            max-width: 600px;
+            margin: 0;
+            overflow-y: auto;
+            max-height: 60%;
+            padding: 0 5px;
+        }
+
+        /* Controles de navegación */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px dashed #b59b7a;
+            padding-top: 10px;
+            gap: 5px;
+        }
+
+        button.nav-btn {
+            background: #8c6747;
+            color: var(--pergamino);
+            border: 2px solid #4a321a;
+            padding: 8px 12px;
+            border-radius: 50px;
+            font-family: 'Special Elite', cursive;
+            font-size: clamp(14px, 3vw, 18px);
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        button.nav-btn:hover {
+            background: #614124;
+        }
+
+        .slide-counter {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(14px, 3.5vw, 18px);
+            color: #5c3a21;
+            text-align: center;
+        }
+
+        /* Ajustes específicos para celulares muy pequeños */
+        @media (max-width: 480px) {
+            .envelope-container {
+                height: 280px;
+            }
+            .presentation {
+                height: 85vh;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Carta Cerrada (Estado Inicial) -->
+    <div class="envelope-container" id="envelope" onclick="openLetter()">
+        <div class="envelope-flap"></div>
+        <div class="wax-seal">ℜ</div>
+        <div class="envelope-text">Toca para abrir</div>
+    </div>
+
+    <!-- Presentación (Diapositivas) -->
+    <div class="presentation" id="presentation">
+        <div class="slides-wrapper">
+            <!-- Diapositiva 1 -->
+            <div class="slide active-slide">
+                <h2>𝓗𝓸𝓵𝓪 𝓡𝓪𝓫𝓪𝓷𝓲𝓽𝓸</h2>
+                <p>𝓦𝓸𝓵𝓪𝓹, 𝓱𝓸𝔂 𝓮𝓼 𝓽𝓾 𝓬𝓾𝓶𝓹𝓵𝓮 𝔂 𝓽𝓮 𝓺𝓾𝓮𝓻í𝓪 𝓭𝓪𝓻 𝓾𝓷 𝓹𝓮𝓺𝓾𝓮ñ𝓸 𝓻𝓮𝓰𝓪𝓵𝓲𝓽𝓸, 𝓹𝓸𝓻 𝓮𝓼𝓸 𝓶𝓲𝓼𝓶𝓸 𝓭𝓮 𝓽𝓾 𝓬𝓾𝓶𝓹𝓵𝓮 𝔂 𝓹𝓸𝓻𝓺𝓾𝓮 𝓪𝓹𝓮𝓷𝓪𝓼 𝓵𝓵𝓮𝓿𝓪𝓶𝓸𝓼 𝓾𝓷 𝓪ñ𝓸 𝓱𝓪𝓫𝓵𝓪𝓷𝓭𝓸, 𝔂 𝓼𝓲𝓶𝓹𝓵𝓮𝓶𝓮𝓷𝓽𝓮 𝓽𝓮 𝓺𝓾𝓲𝓮𝓻𝓸 𝓶𝓾𝓬𝓱𝓸, 𝓸𝓳𝓪𝓵𝓪 𝓽𝓮 𝓵𝓪 𝓹𝓪𝓼𝓮𝓼 𝓶𝓾𝔂 𝓫𝓲𝓮𝓷 𝔂 𝓽𝓸𝓭𝓸, 𝓵𝓪 𝓿𝓮𝓻𝓭𝓪𝓭 𝓷𝓸 𝓼𝓸𝔂 𝓫𝓾𝓮𝓷𝓸 𝓭𝓲𝓬𝓲𝓮𝓷𝓭𝓸 𝓹𝓪𝓵𝓪𝓫𝓻𝓪𝓼 𝓹𝓪𝓻𝓪 𝓮𝓼𝓽𝓮 𝓽𝓲𝓹𝓸 𝓭𝓮 𝓬𝓸𝓼𝓪𝓼 𝓹𝓮𝓻𝓸 𝓫𝓷𝓸𝓹, 𝓶𝓾𝔂 𝓰𝓾𝓭 𝓺𝓾𝓮 𝔂𝓪 𝓽𝓲𝓮𝓷𝓮𝓼 𝓾𝓷 𝓪ñ𝓲𝓽𝓸 𝓶á𝓼 𝔂 𝓹𝓸𝓼 𝓪𝓳𝓪𝓵𝓪 𝓽𝓮𝓷𝓰𝓪𝓶𝓸𝓼 𝓶𝓪𝓼 𝓪ñ𝓸𝓼 𝓼𝓲𝓮𝓷𝓭𝓸 𝓯𝓻𝓲𝓮𝓷𝓭𝓼</p>
+            </div>
+            <!-- Diapositiva 2 -->
+            <div class="slide">
+                <h2>𝓣𝓮 𝓺𝓾𝓲𝓮𝓻𝓸 𝓶𝓾𝓬𝓱𝓸</h2>
+                <p>Nuestra misión principal radica en rescatar las ideas clásicas y unirlas con la innovación de los tiempos modernos.</p>
+            </div>
+            <!-- Diapositiva 3 -->
+            <div class="slide">
+                <h2>III. Contexto Histórico</h2>
+                <p>Las bases sobre las cuales construimos nuestro presente están firmemente arraigadas en la experiencia y el estudio constante.</p>
+            </div>
+            <!-- Diapositiva 4 -->
+            <div class="slide">
+                <h2>IV. Análisis de Situación</h2>
+                <p>Examinando los detalles minuciosos del entorno, podemos advertir tanto los retos como las oportunidades venideras.</p>
+            </div>
+            <!-- Diapositiva 5 -->
+            <div class="slide">
+                <h2>V. Estrategia Principal</h2>
+                <p>Trazamos un mapa de ruta preciso, sellado con convicción, para garantizar el éxito de nuestra travesía.</p>
+            </div>
+        </div>
+
+        <!-- Controles de la presentación -->
+        <div class="controls">
+            <button class="nav-btn" onclick="changeSlide(-1)">← Anterior</button>
+            <span class="slide-counter" id="counter">Página 1 de 5</span>
+            <button class="nav-btn" onclick="changeSlide(1)">Siguiente →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function openLetter() {
+            const envelope = document.getElementById('envelope');
+            const presentation = document.getElementById('presentation');
+            
+            envelope.classList.add('open');
+            setTimeout(() => {
+                presentation.classList.add('active');
+            }, 400);
+        }
+
+        function changeSlide(direction) {
+            slides[currentSlide].classList.remove('active-slide');
+            currentSlide += direction;
+
+            if (currentSlide < 0) {
+                currentSlide = 0;
+            } else if (currentSlide >= totalSlides) {
+                currentSlide = totalSlides - 1;
+            }
+
+            slides[currentSlide].classList.add('active-slide');
+            document.getElementById('counter').innerText = `Página ${currentSlide + 1} de ${totalSlides}`;
+        }
+    </script>
+</body>
+</html>
