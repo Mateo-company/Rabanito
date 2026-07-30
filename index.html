@@ -29,7 +29,7 @@
             overflow-x: hidden;
         }
 
-        /* Contenedor principal de la carta (Responsivo con escala automática) */
+        /* Contenedor del sobre que se ajusta al 100% del ancho del div contenedor */
         .envelope-wrapper {
             width: 100%;
             max-width: 480px;
@@ -40,19 +40,17 @@
 
         .envelope-container {
             position: relative;
-            width: 480px;
-            height: 330px;
+            width: 100%;
+            /* Mantiene la proporción de aspecto original (480x330) de forma automática */
+            aspect-ratio: 480 / 330;
             background: var(--pergamino-oscuro);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7), inset 0 0 40px rgba(112, 75, 42, 0.3);
-            border: 5px solid #8c6747;
+            border: 4px solid #8c6747;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
             transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            /* Hace que el sobre sereduzca proporcionalmente si la pantalla es menor a 480px */
-            transform: scale(var(--env-scale, 1));
-            transform-origin: center;
         }
 
         .envelope-container.open {
@@ -62,23 +60,45 @@
             position: absolute;
         }
 
+        /* Solapa adaptada con porcentajes para que llene el 100% del ancho del div */
         .envelope-flap {
             position: absolute;
             top: 0;
             left: 0;
             width: 0;
             height: 0;
-            border-left: 240px solid transparent;
-            border-right: 240px solid transparent;
-            border-top: 165px solid #825c0b;
+            border-left: 50vw solid transparent; /* Se adapta al ancho de pantalla/div */
+            border-right: 50vw solid transparent;
+            border-top: calc(480px * 0.344) solid #825c0b; /* Proporción basada en el alto original */
             transform-origin: top;
             transition: transform 0.6s ease;
+            max-border-left: 240px;
+        }
+
+        /* Truco responsivo alternativo para la solapa por porcentaje exacto del contenedor */
+        .envelope-container {
+            overflow: hidden; /* Oculta lo que sobrepase el contenedor flexible */
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #b4a076;
+            clip-path: polygon(0 0, 50% 100%, 100% 0); /* Dibuja el triángulo perfecto sin importar el ancho del div */
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            border: none;
         }
 
         .wax-seal {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 12%;
+            height: 18%;
+            min-width: 40px;
+            min-height: 40px;
             background: radial-gradient(circle, var(--sello-cera) 60%, var(--sello-cera-oscuro) 100%);
             border-radius: 50%;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.3);
@@ -88,10 +108,10 @@
             color: #ffcccc;
             font-family: 'Cinzel', serif;
             font-weight: bold;
-            font-size: 24px;
+            font-size: clamp(16px, 4vw, 24px);
             text-shadow: 0 -1px 1px rgba(0,0,0,0.8);
             z-index: 10;
-            border: 3px dashed #520909;
+            border: 2px dashed #520909;
             transition: transform 0.3s;
         }
 
@@ -101,13 +121,15 @@
 
         .envelope-text {
             font-family: 'IM Fell English SC', serif;
-            font-size: 45px;
+            font-size: clamp(24px, 7vw, 45px);
             letter-spacing: 2px;
             color: #5c3a21;
-            margin-top: 155px;
+            margin-top: 20%;
             text-align: center;
             z-index: 5;
             width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
         }
 
         /* Contenedor de la Presentación (Diapositivas) */
@@ -168,7 +190,7 @@
 
         h2 {
             font-family: 'Cinzel', serif;
-            font-size: clamp(22px, 5vw, 28px);
+            font-size: clamp(20px, 5vw, 28px);
             color: #3b220c;
             border-bottom: 2px solid #8c6747;
             padding-bottom: 8px;
@@ -177,7 +199,7 @@
         }
 
         p {
-            font-size: clamp(15px, 3.8vw, 18px);
+            font-size: clamp(14px, 3.5vw, 18px);
             line-height: 1.6;
             color: #4a321a;
             max-width: 600px;
@@ -187,7 +209,7 @@
             padding: 0 5px;
         }
 
-        /* Controles de navegación adaptados */
+        /* Controles de navegación */
         .controls {
             display: flex;
             justify-content: space-between;
@@ -225,9 +247,7 @@
 </head>
 <body>
 
-    <!-- Contenedor externo para escalar el sobre en celulares -->
     <div class="envelope-wrapper">
-        <!-- Carta Cerrada (Estado Inicial) -->
         <div class="envelope-container" id="envelope" onclick="openLetter()">
             <div class="envelope-flap"></div>
             <div class="wax-seal">ℜ</div>
@@ -235,37 +255,30 @@
         </div>
     </div>
 
-    <!-- Presentación (Diapositivas) -->
     <div class="presentation" id="presentation">
         <div class="slides-wrapper">
-            <!-- Diapositiva 1 -->
             <div class="slide active-slide">
                 <h2>𝓗𝓸𝓵𝓪 𝓡𝓪𝓫𝓪𝓷𝓲𝓽𝓸</h2>
                 <p>𝓦𝓸𝓵𝓪𝓹, 𝓱𝓸𝔂 𝓮𝓼 𝓽𝓾 𝓬𝓾𝓶𝓹𝓵𝓮 𝔂 𝓽𝓮 𝓺𝓾𝓮𝓻í𝓪 𝓭𝓪𝓻 𝓾𝓷 𝓹𝓮𝓺𝓾𝓮ñ𝓸 𝓻𝓮𝓰𝓪𝓵𝓲𝓽𝓸, 𝓹𝓸𝓻 𝓮𝓼𝓸 𝓶𝓲𝓼𝓶𝓸 𝓭𝓮 𝓽𝓾 𝓬𝓾𝓶𝓹𝓵𝓮 𝔂 𝓹𝓸𝓻𝓺𝓾𝓮 𝓪𝓹𝓮𝓷𝓪𝓼 𝓵𝓵𝓮𝓿𝓪𝓶𝓸𝓼 𝓾𝓷 𝓪ñ𝓸 𝓱𝓪𝓫𝓵𝓪𝓷𝓭𝓸, 𝔂 𝓼𝓲𝓶𝓹𝓵𝓮𝓶𝓮𝓷𝓽𝓮 𝓽𝓮 𝓺𝓾𝓲𝓮𝓻𝓸 𝓶𝓾𝓬𝓱𝓸, 𝓸𝓳𝓪𝓵𝓪 𝓽𝓮 𝓵𝓪 𝓹𝓪𝓼𝓮𝓼 𝓶𝓾𝔂 𝓫𝓲𝓮𝓷 𝔂 𝓽𝓸𝓭𝓸, 𝓵𝓪 𝓿𝓮𝓻𝓭𝓪𝓭 𝓷𝓸 𝓼𝓸𝔂 𝓫𝓾𝓮𝓷𝓸 𝓭𝓲𝓬𝓲𝓮𝓷𝓭𝓸 𝓹𝓪𝓵𝓪𝓫𝓻𝓪𝓼 𝓹𝓪𝓻𝓪 𝓮𝓼𝓽𝓮 𝓽𝓲𝓹𝓸 𝓭𝓮 𝓬𝓸𝓼𝓪𝓼 𝓹𝓮𝓻𝓸 𝓫𝓷𝓸𝓹, 𝓶𝓾𝔂 𝓰𝓾𝓭 𝓺𝓾𝓮 𝔂𝓪 𝓽𝓲𝓮𝓷𝓮𝓼 𝓾𝓷 𝓪ñ𝓲𝓽𝓸 𝓶á𝓼 𝔂 𝓹𝓸𝓼 𝓪𝓳𝓪𝓵𝓪 𝓽𝓮𝓷𝓰𝓪𝓶𝓸𝓼 𝓶𝓪𝓼 𝓪ñ𝓸𝓼 𝓼𝓲𝓮𝓷𝓭𝓸 𝓯𝓻𝓲𝓮𝓷𝓭𝓼</p>
             </div>
-            <!-- Diapositiva 2 -->
             <div class="slide">
                 <h2>𝓣𝓮 𝓺𝓾𝓲𝓮𝓻𝓸 𝓶𝓾𝓬𝓱𝓸</h2>
                 <p>Nuestra misión principal radica en rescatar las ideas clásicas y unirlas con la innovación de los tiempos modernos.</p>
             </div>
-            <!-- Diapositiva 3 -->
             <div class="slide">
                 <h2>III. Contexto Histórico</h2>
                 <p>Las bases sobre las cuales construimos nuestro presente están firmemente arraigadas en la experiencia y el estudio constante.</p>
             </div>
-            <!-- Diapositiva 4 -->
             <div class="slide">
                 <h2>IV. Análisis de Situación</h2>
                 <p>Examinando los detalles minuciosos del entorno, podemos advertir tanto los retos como las oportunidades venideras.</p>
             </div>
-            <!-- Diapositiva 5 -->
             <div class="slide">
                 <h2>V. Estrategia Principal</h2>
                 <p>Trazamos un mapa de ruta preciso, sellado con convicción, para garantizar el éxito de nuestra travesía.</p>
             </div>
         </div>
 
-        <!-- Controles de la presentación -->
         <div class="controls">
             <button class="nav-btn" onclick="changeSlide(-1)">← Anterior</button>
             <span class="slide-counter" id="counter">Página 1 de 5</span>
@@ -277,21 +290,6 @@
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const totalSlides = slides.length;
-
-        // Script para ajustar automáticamente el tamaño del sobre si la pantalla es muy estrecha
-        function ajustarEscalaSobre() {
-            const container = document.getElementById('envelope');
-            const screenWidth = window.innerWidth;
-            if (screenWidth < 500) {
-                let scale = (screenWidth - 30) / 480;
-                container.style.setProperty('--env-scale', scale);
-            } else {
-                container.style.setProperty('--env-scale', 1);
-            }
-        }
-
-        window.addEventListener('resize', ajustarEscalaSobre);
-        window.addEventListener('DOMContentLoaded', ajustarEscalaSobre);
 
         function openLetter() {
             const envelope = document.getElementById('envelope');
